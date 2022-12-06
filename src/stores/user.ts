@@ -1,46 +1,44 @@
-import { defineStore, acceptHMRUpdate } from 'pinia'
+import { defineStore } from "pinia";
+import Repository from "../services/Repository";
 
-/**
- * Simulate a login
- */
-function apiLogin(a: string, p: string) {
-    if (a === 'ed' && p === 'ed') return Promise.resolve({ isAdmin: true })
-    if (p === 'ed') return Promise.resolve({ isAdmin: false })
-    return Promise.reject(new Error('invalid credentials'))
-}
-
-export const useUserStore = defineStore({
-    id: 'user',
+export const useAuthStore = defineStore("auth", {
     state: () => ({
-        name: 'Eduardo',
-        isAdmin: true,
+        loggedIn: localStorage.getItem("token") ? true : false,
+        user: null,
     }),
 
-    actions: {
-        logout() {
-            this.$patch({
-                name: '',
-                isAdmin: false,
-            })
+    getters: {},
 
-            // we could do other stuff like redirecting the user
+    actions: {
+        async login(credentials) {
+            await Repository.get("sanctum/csrf-cookie");
+
+            const response = (await Repository.post("api/login", credentials)).data;
+
+            if (response) {
+                const token = `Bearer ${response.token}`;
+
+                localStorage.setItem("token", token);
+                Repository.defaults.headers.common["Authorization"] = token;
+
+                await this.ftechUser();
+            }
         },
 
-        /**
-         * Attempt to login a user
-         */
-        async login(user: string, password: string) {
-            const userData = await apiLogin(user, password)
+        async logout() {
+            const response = (await Repository.post("api/logout")).data;
 
-            this.$patch({
-                name: user,
-                ...userData,
+            if (response) {
+                localStorage.removeItem("token");
 
-            })
+                this.$reset();
+            }
+        },
+
+        async ftechUser() {
+            this.user = (await Repository.get("api/me")).data;
+
+            this.loggedIn = true;
         },
     },
-})
-
-if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot))
-}
+});
