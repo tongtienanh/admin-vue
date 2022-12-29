@@ -7,15 +7,11 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    ElButton: typeof import('element-plus/es')['ElButton']
-    ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
-    ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
-    ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
-    ElRow: typeof import('element-plus/es')['ElRow']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    Home: typeof import('./src/components/commons/Home.vue')['default']
-    Login: typeof import('./src/components/commons/Login.vue')['default']
+    Drawer: typeof import('./src/components/commons/Drawer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VListItemAvatar: typeof import('vuetify/lib')['VListItemAvatar']
+    VListItemContent: typeof import('vuetify/lib')['VListItemContent']
+    VListItemIcon: typeof import('vuetify/lib')['VListItemIcon']
   }
 }

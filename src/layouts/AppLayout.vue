@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import AppLayoutDefault from './AppLayoutDefault.vue'
+import AppLayoutDefault from './DefaultLayout.vue'
 import { markRaw, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-
 const layout = ref()
 const route = useRoute()
-
 watch(
     () => route.meta?.layout as string | undefined,
     async (metaLayout) => {
